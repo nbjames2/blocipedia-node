@@ -6,7 +6,6 @@ module.exports = {
             req.checkBody("password", "must be at least 6 characters in length").isLength({min: 6});
             req.checkBody("passwordConfirmation", "must match password provided").optional().matches(req.body.password);
         }
-        console.log(req.body);
         const errors = req.validationErrors();
         if(errors) {
             req.flash("error", errors);
