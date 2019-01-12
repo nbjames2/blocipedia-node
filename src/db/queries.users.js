@@ -1,5 +1,6 @@
 const User = require("./models").User;
 const bcrypt = require("bcryptjs");
+const { body } = require('express-validator/check');
 
 module.exports = {
     createUser(newUser, callback){

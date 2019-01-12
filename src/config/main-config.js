@@ -7,6 +7,7 @@ const session = require("express-session");
 const flash = require("express-flash");
 const logger = require("morgan");
 const passportConfig = require("./passport-config");
+const User = require("../db/models").User;
  
 module.exports = {
  init(app, express){
@@ -29,6 +30,5 @@ module.exports = {
       res.locals.currentUser = req.user;
       next();
   })
-
-  }
-}; 
+ }
+};
