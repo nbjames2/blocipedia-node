@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <% include ../static/partials/head.ejs %>
+    </head>
+    <body>
+        <% include ../static/partials/navbar.ejs %>
+        <main class="container">
+            Are you sure you would like to downgrade your account?
+            <a class="btn btn-danger" href="/users/<%= currentUser.id %>/downgrade">Downgrade</a>
+        </main>
+
+        <% include ../static/partials/baseScripts.ejs %>
+    </body>
+</html>

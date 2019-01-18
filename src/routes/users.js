@@ -11,5 +11,6 @@ router.get("/users/sign_out", userController.signOut);
 router.get("/users/payment", userController.payment);
 router.post("/users/:id/payed", userController.payed);
 router.get("/users/:id/downgrade", userController.downgrade);
+router.get("/users/downgrade", userController.downgradeConf);
 
 module.exports = router;

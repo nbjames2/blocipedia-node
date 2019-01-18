@@ -93,6 +93,9 @@ module.exports = {
             res.redirect(500, "/users/payment");
         }
     },
+    downgradeConf(req, res, next){
+        res.render("users/downgrade");
+    },
     downgrade(req, res, next){
         console.log("downgrade function start");
         User.findById(req.params.id)
