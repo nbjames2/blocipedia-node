@@ -1,6 +1,8 @@
 const userQueries = require("../db/queries.users.js");
 const passport = require("passport");
 const sgMail = require('@sendgrid/mail');
+const stripe = require("stripe")(process.env.Stripe_Key);
+const User = require("../db/models").User;
 
 module.exports = {
     signUp(req, res, next){
@@ -53,5 +55,62 @@ module.exports = {
        req.logout();
        req.flash("notice", "You've successfully signed out!");
        res.redirect("/"); 
+    },
+    payment(req, res, next){
+        res.render("users/payment");
+    },
+    payed(req, res, next){
+        if(req.body.stripeToken){
+            User.findById(req.params.id)
+            .then((user) => {
+                let updatedUser = {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    password: user.password,
+                    role: 1
+                }
+                userQueries.upgrade(updatedUser, (err, upgrade) => {
+                    if(err || upgrade == null){
+                        req.flash("notice", "Upgrade failed");
+                        res.redirect("/users/payment");
+                    } else {
+                        const token = req.body.stripeToken;
+                        const charge = stripe.charges.create({
+                            amount: '1500',
+                            currency: 'cad',
+                            description: 'Upgrade to premium Blocipedia account',
+                            source: token,
+                        });
+                        req.flash("notice", "Payment accepted, Welcome to the cool side of the pillow!");
+                        res.redirect(303, "/");
+                    }
+                })
+            })
+            
+        } else {
+            req.flash("notice", "payment error");
+            res.redirect(500, "/users/payment");
+        }
+    },
+    downgrade(req, res, next){
+        console.log("downgrade function start");
+        User.findById(req.params.id)
+        .then((user) => {
+            newUser = {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                password: user.password,
+                role: 0
+            }
+            user.update(newUser, {
+                fields: Object.keys(newUser)
+            })
+            .then(() => {
+                req.flash("notice", "You are now a lowly surf");
+                res.redirect(303, "/");
+            })
+        })
     }
 }

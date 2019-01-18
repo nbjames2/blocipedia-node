@@ -16,7 +16,24 @@ module.exports = {
         })
         .catch((err) => {
             callback(err);
+        });      
+    },
+    upgrade(updatedUser, callback){
+        return User.findById(updatedUser.id)
+        .then((user) => {
+            console.log(user);
+            if(!user){
+                return callback("user not found");
+            }
+            user.update(updatedUser, {
+                fields: Object.keys(updatedUser)
+            })
+            .then((userUpdated) => {
+                callback(null, userUpdated);
+            })
+            .catch((err) => {
+                callback(err);
+            })
         });
-       
     }
 }
