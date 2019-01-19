@@ -3,6 +3,7 @@ const passport = require("passport");
 const sgMail = require('@sendgrid/mail');
 const stripe = require("stripe")(process.env.Stripe_Key);
 const User = require("../db/models").User;
+const Wiki = require("../db/models").Wiki;
 
 module.exports = {
     signUp(req, res, next){
@@ -111,8 +112,28 @@ module.exports = {
                 fields: Object.keys(newUser)
             })
             .then(() => {
-                req.flash("notice", "You are now a lowly surf");
-                res.redirect(303, "/");
+                Wiki.findAll({where: {
+                    private: true,
+                    userId: user.id
+                }})
+                .then((wikis) => {
+                    wikis.forEach((wiki) => {
+                        newWiki = {
+                            title: wiki.title,
+                            body: wiki.body,
+                            private: false,
+                            userId: wiki.userId
+                        }
+                        wiki.update(newWiki, {
+                            fields: Object.keys(newWiki)
+                        })
+                        .then(() => {
+                            req.flash("notice", "You are now a lowly surf");
+                            res.redirect(303, "/");
+                        })
+                    });
+                })
+                
             })
         })
     }

@@ -18,9 +18,11 @@
                 <label for="body">Wiki body</label>
                 <textarea rows="4" class="form-control" name="body" placeholder="Enter Body"></textarea>
             </div>
+            <% if(currentUser.role == 1) { %>
             <div class="form-group">
                 <input type="checkbox" name="private" value="private">Private<br>
             </div>
+            <% } %>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
         <% } %>

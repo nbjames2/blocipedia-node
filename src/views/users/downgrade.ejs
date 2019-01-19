@@ -6,7 +6,7 @@
     <body>
         <% include ../static/partials/navbar.ejs %>
         <main class="container">
-            Are you sure you would like to downgrade your account?
+            <h5>All of your private wikis will become public after downgrading. Are you sure you would like to downgrade your account?</h5>
             <a class="btn btn-danger" href="/users/<%= currentUser.id %>/downgrade">Downgrade</a>
         </main>
 

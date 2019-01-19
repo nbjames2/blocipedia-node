@@ -83,7 +83,18 @@ module.exports = {
         });
     },
     update(req, res, next){
-        wikiQueries.updateWiki(req, req.body, (err, wiki) => {
+        let private;
+            if(req.body.private === "private"){
+                private = true;
+            } else {
+                private = false;
+            }
+        updatedWiki = {
+            title: req.body.title,
+            body: req.body.body,
+            private: private,
+        }
+        wikiQueries.updateWiki(req, updatedWiki, (err, wiki) => {
             if(err || wiki == null){
                 res.redirect(401, `/wikis/${req.params.id}/edit`);
             } else {
