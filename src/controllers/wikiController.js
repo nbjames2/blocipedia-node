@@ -1,14 +1,23 @@
 const wikiQueries = require("../db/queries.wiki");
 const Authorizer = require("../policies/wiki");
 const markdown = require("markdown").markdown;
+const collaboratorQueries = require("../db/queries.collaborators.js");
+const User = require("../db/models").User;
 
 module.exports = {
     index(req, res, next){
-        wikiQueries.getAllWikis((err, wikis) => {
+        wikiQueries.getAllWikis(req, (err, wikis) => {
             if(err){
                 res.redirect(500, "static/index");
             } else {
-                res.render("wikis/index", {wikis});
+                wikiQueries.getAllPrivateWikis(req, (err, privates) => {
+                    if(err){
+                        res.redirect(500, "/");
+                    } else {
+                        res.render("wikis/index", {wikis, privates});
+                    }
+                })
+                
             }
         })
     },
@@ -37,11 +46,16 @@ module.exports = {
                 private: private,
                 userId: req.user.id
             };
-            console.log(newWiki);
             wikiQueries.addWiki(newWiki, (err, wiki) => {
                 if(err){
                     res.redirect(500, "/wikis/new");
                 } else {
+                    if(wiki.private == true){
+                        User.findById(req.user.id)
+                        .then((user) => {
+                        collaboratorQueries.addCollaborator(wiki.id, user, (err, collaborator) => {})
+                        })
+                    }
                     res.redirect(303, `/wikis/${wiki.id}`);
                 }
             });
@@ -94,6 +108,10 @@ module.exports = {
         let private;
             if(req.body.private === "private"){
                 private = true;
+                User.findById(req.user.id)
+                .then((user) => {
+                collaboratorQueries.addCollaborator(req.params.id, user, (err, collaborator) => {})
+                })
             } else {
                 private = false;
             }

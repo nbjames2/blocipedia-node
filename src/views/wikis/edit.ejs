@@ -21,11 +21,27 @@
                     </div>
                     <% if(currentUser.role == 1) { %>
                         <div class="form-group">
-                            <input type="checkbox" name="private" value="private">Private<br>
+                            <input type="checkbox" name="private" value="private" checked=<%= wiki.private %>>Private<br>
                         </div>
                     <% } %>
                     <button type="submit" class="btn btn-primary">Update</button>
                 </form>
+                <% if(wiki.private == true && currentUser.role == 2 || wiki.private == true && currentUser.role == 1) { %>
+                    <form style="display:initial" action="/wikis/<%= wiki.id %>/collaborator/add" method="post">
+                        <div class="form-group">
+                            <label for="collaborator">Add Collaborator</label>
+                            <input type="text" class="form-control" name="collaborator" aria-describedby="collaboratorHelp" placeholder="Enter collaborator email">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
+                    <form style="display:initial" action="/wikis/<%= wiki.id %>/collaborator/remove" method="post">
+                        <div class="form-group">
+                            <label for="removeCollaborator">Remove Collaborator</label>
+                            <input type="text" class="form-control" name="removeCollaborator" aria-describedby="removeCollaboratorHelp" placeholder="Enter collaborator email">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Remove</button>
+                    </form>
+                <% } %>
             <% } %>
 
         </main>
